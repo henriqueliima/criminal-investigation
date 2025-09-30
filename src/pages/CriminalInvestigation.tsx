@@ -1,100 +1,235 @@
 import '@xyflow/react/dist/style.css'
 
+import { DndContext, DragOverlay } from '@dnd-kit/core'
 import {
-  addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
   Background,
+  type Connection,
   Controls,
   type Edge,
-  Handle,
-  type Node,
-  type OnConnect,
-  type OnEdgesChange,
-  type OnNodesChange,
+  type EdgeChange,
+  type NodeChange,
   Panel,
-  Position,
   ReactFlow,
 } from '@xyflow/react'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 
-const initialGroups: Node[] = []
-
-const initialEdges: Edge[] = [{ id: 'e1-2', source: '1', target: '2' }]
+import Button from '../components/Button'
+import CreateClueModal from '../components/CreateClueModal'
+import InvestigationCategoryNode from '../components/InvestigationCategoryNode'
+import Modal from '../components/Modal'
+import { useDragAndDrop } from '../hooks/useDragAndDrop'
+import {
+  useCategoryModal,
+  useClueModal,
+  useNewCategoryModal,
+} from '../hooks/useModalManagement'
+import {
+  useAllCategories,
+  useCategoriesData,
+  useCategoryConnections,
+  useCategoryNodes,
+  useInvestigationActions,
+} from '../store/InvestigationStore'
 
 function CriminalInvestigationPage() {
-  const [nodes, setNodes] = useState<Node[]>(initialGroups)
-  const [edges, setEdges] = useState<Edge[]>(initialEdges)
+  const categoryNodes = useCategoryNodes()
+  const categoryConnections = useCategoryConnections()
+  const categoriesData = useCategoriesData()
+  const allCategories = useAllCategories()
 
-  const onNodesChange: OnNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [setNodes]
+  const {
+    applyNodeChanges,
+    applyEdgeChanges,
+    addConnection,
+    addCategory,
+    deleteCategory,
+    updateCategoryTitle,
+    addClue,
+    moveClueToCategory,
+    reorderClues,
+  } = useInvestigationActions()
+
+  const clueModal = useClueModal()
+  const categoryModal = useCategoryModal()
+  const newCategoryModal = useNewCategoryModal()
+
+  const { sensors, activeClue, onDragStart, onDragEnd, onDragOver } =
+    useDragAndDrop({
+      moveClueToCategory,
+      reorderClues,
+      categoriesData,
+    })
+
+  const handleOpenCreateClueModal = useCallback(
+    (categoryId: string) => {
+      clueModal.openModal(categoryId)
+    },
+    [clueModal]
   )
-  const onEdgesChange: OnEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [setEdges]
+
+  const handleSaveClue = useCallback(() => {
+    if (!clueModal.categoryId) return
+    addClue(clueModal.categoryId, clueModal.content)
+    clueModal.closeModal()
+  }, [clueModal, addClue])
+
+  const handleSaveNewCategory = useCallback(() => {
+    addCategory(newCategoryModal.categoryName)
+    newCategoryModal.closeModal()
+  }, [newCategoryModal, addCategory])
+
+  const handleEditCategory = useCallback(
+    (categoryId: string, title: string) => {
+      categoryModal.openModal(categoryId, title)
+    },
+    [categoryModal]
   )
-  const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
-  )
 
-  const getNodeId = () => `randomnode_${+new Date()}`
-
-  const handleAddInvestigationNode = () => {
-    return (
-      <div className="text-updater-node relative border bg-white p-2">
-        <Handle type="target" position={Position.Top} id="top" />
-        <Handle type="source" position={Position.Bottom} id="bottom" />
-        <Handle type="target" position={Position.Left} id="left" />
-        <Handle type="source" position={Position.Right} id="right" />
-        <div>
-          <h2>Grupo de investigação criminal</h2>
-        </div>
-      </div>
-    )
-  }
-
-  const nodeTypes = {
-    textUpdater: handleAddInvestigationNode,
-  }
-
-  const handleAddGroup = useCallback(() => {
-    const newGroup: Node = {
-      id: getNodeId(),
-      type: 'textUpdater',
-      data: {},
-      position: {
-        x: (Math.random() - 0.5) * 200,
-        y: (Math.random() - 0.5) * 200,
-      },
+  const handleSaveCategoryEdit = useCallback(() => {
+    if (categoryModal.categoryId && categoryModal.categoryName.trim()) {
+      updateCategoryTitle(
+        categoryModal.categoryId,
+        categoryModal.categoryName.trim()
+      )
     }
-    setNodes((nodes) => nodes.concat(newGroup))
-  }, [setNodes])
+    categoryModal.closeModal()
+  }, [categoryModal, updateCategoryTitle])
+
+  const handleDeleteCategory = useCallback(() => {
+    if (categoryModal.categoryId) {
+      deleteCategory(categoryModal.categoryId)
+      categoryModal.closeModal()
+    }
+  }, [categoryModal, deleteCategory])
+
+  const handleCategoryNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      applyNodeChanges(changes)
+    },
+    [applyNodeChanges]
+  )
+
+  const handleConnectionsChange = useCallback(
+    (changes: EdgeChange[]) => {
+      applyEdgeChanges(changes)
+    },
+    [applyEdgeChanges]
+  )
+
+  const handleConnect = useCallback(
+    (connection: Connection) => {
+      const newConnection: Edge = {
+        id: `connection-${Date.now()}`,
+        source: connection.source,
+        target: connection.target,
+        sourceHandle: connection.sourceHandle,
+        targetHandle: connection.targetHandle,
+      }
+      addConnection(newConnection)
+    },
+    [addConnection]
+  )
+
+  const categoryNodeTypes = useMemo(
+    () => ({
+      investigationCategory: ({ id }: { id: string }) => (
+        <InvestigationCategoryNode
+          categoryId={id}
+          onEditCategory={handleEditCategory}
+          onCreateClue={handleOpenCreateClueModal}
+          allCategories={allCategories}
+        />
+      ),
+    }),
+    [handleEditCategory, handleOpenCreateClueModal, allCategories]
+  )
 
   return (
-    <div className="h-screen w-screen">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        onConnect={onConnect}
-        fitView
-      >
-        <Background />
-        <Controls />
-        <Panel>
-          <button
-            className="border bg-black px-4 py-2 text-white"
-            onClick={handleAddGroup}
-          >
-            Adicionar grupo
-          </button>
-        </Panel>
-      </ReactFlow>
-    </div>
+    <DndContext
+      sensors={sensors}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragOver={onDragOver}
+    >
+      <div className="h-screen w-screen">
+        <ReactFlow
+          nodes={categoryNodes}
+          edges={categoryConnections}
+          onNodesChange={handleCategoryNodesChange}
+          onEdgesChange={handleConnectionsChange}
+          nodeTypes={categoryNodeTypes}
+          onConnect={handleConnect}
+          proOptions={{ hideAttribution: true }}
+          fitView={false}
+        >
+          <Background />
+          <Controls />
+          <Panel>
+            <Button onClick={newCategoryModal.openModal}>
+              Adicionar Categoria
+            </Button>
+          </Panel>
+
+          {clueModal.isOpen && (
+            <CreateClueModal
+              isOpen={clueModal.isOpen}
+              clueContent={clueModal.content}
+              onContentChange={clueModal.setContent}
+              onSave={handleSaveClue}
+              onClose={clueModal.closeModal}
+            />
+          )}
+
+          {newCategoryModal.isOpen && (
+            <Modal
+              saveModal={handleSaveNewCategory}
+              closeModal={newCategoryModal.closeModal}
+            >
+              <input
+                type="text"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                placeholder="Nome da categoria (ex: Evidências Físicas)"
+                value={newCategoryModal.categoryName}
+                onChange={(e) =>
+                  newCategoryModal.setCategoryName(e.target.value)
+                }
+                autoFocus
+              />
+            </Modal>
+          )}
+
+          {categoryModal.isOpen && (
+            <Modal
+              saveModal={handleSaveCategoryEdit}
+              closeModal={categoryModal.closeModal}
+              deleteModal={handleDeleteCategory}
+              showDelete={true}
+            >
+              <input
+                type="text"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                placeholder="Nome da categoria"
+                value={categoryModal.categoryName}
+                onChange={(e) => categoryModal.setCategoryName(e.target.value)}
+                autoFocus
+              />
+            </Modal>
+          )}
+        </ReactFlow>
+
+        {createPortal(
+          <DragOverlay>
+            {activeClue && (
+              <div className="relative flex cursor-grabbing rounded-xl bg-brand-background px-2 py-4 text-left text-white opacity-90 shadow-2xl">
+                {activeClue.content}
+              </div>
+            )}
+          </DragOverlay>,
+          document.body
+        )}
+      </div>
+    </DndContext>
   )
 }
 
