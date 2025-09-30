@@ -43,7 +43,6 @@ export const useDragAndDrop = ({
   const onDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event
 
-    // Só ativa se for especificamente uma Clue
     if (active.data.current?.type === 'Clue') {
       setActiveClue(active.data.current.clue)
     }
