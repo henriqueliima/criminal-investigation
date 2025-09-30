@@ -5,6 +5,7 @@ import { memo, useCallback, useMemo, useState } from 'react'
 
 import type { Clue, Id, InvestigationCategory } from '../types'
 import { type ContentType, detectMediaType } from '../types/mediaTypes'
+import Button from './Button'
 import ClueEditorModal from './ClueEditorModal'
 import MediaPreview from './MediaPreview'
 import Modal from './Modal'
@@ -181,13 +182,14 @@ const ClueCard = memo(
               )}
             </div>
 
-            <button
+            <Button
               onClick={handleEditClick}
-              className="z-20 shrink-0 text-white transition-all hover:scale-110 hover:text-yellow-300"
+              color="transparent"
+              className="z-20 shrink-0 transition-all hover:scale-110"
               style={{ pointerEvents: 'auto' }}
             >
               <EditIcon className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 

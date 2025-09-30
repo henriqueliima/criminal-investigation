@@ -9,6 +9,7 @@ import {
   useCategoryData,
   useInvestigationActions,
 } from '../store/InvestigationStore'
+import Button from './Button'
 import ClueCard from './ClueCard'
 
 interface InvestigationCategoryNodeProps {
@@ -136,12 +137,13 @@ const InvestigationCategoryNode = memo(
           </div>
 
           <div className="p-2">
-            <button
+            <Button
               onClick={handleCreateClue}
-              className="w-full rounded bg-brand-secondary px-4 py-2 text-black transition-colors hover:opacity-70"
+              color="secondary"
+              className="w-full rounded px-4 py-2 transition-colors hover:opacity-70"
             >
               Adicionar Pista
-            </button>
+            </Button>
           </div>
         </div>
       </div>

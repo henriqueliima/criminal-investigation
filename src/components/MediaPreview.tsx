@@ -1,6 +1,7 @@
 import { memo, useState } from 'react'
 
 import type { MediaType } from '../types/mediaTypes'
+import Button from './Button'
 
 interface MediaPreviewProps {
   content: string
@@ -44,13 +45,13 @@ const MediaPreview = memo(
               draggable={false}
             />
             {!readOnly && !isEditingUrl && (
-              <button
+              <Button
                 type="button"
                 onClick={() => setIsEditingUrl(true)}
                 className="w-full rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-200"
               >
                 Editar URL da imagem
-              </button>
+              </Button>
             )}
             {!readOnly && isEditingUrl && (
               <div className="space-y-2">
@@ -63,20 +64,20 @@ const MediaPreview = memo(
                   autoFocus
                 />
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="button"
                     onClick={handleSaveUrl}
                     className="flex-1 rounded-md bg-brand-background px-3 py-1.5 text-sm text-white hover:opacity-70"
                   >
                     Salvar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={handleCancelUrl}
                     className="flex-1 rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-200"
                   >
                     Cancelar
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -99,13 +100,13 @@ const MediaPreview = memo(
               />
             </div>
             {!readOnly && !isEditingUrl && (
-              <button
+              <Button
                 type="button"
                 onClick={() => setIsEditingUrl(true)}
                 className="w-full rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-200"
               >
                 Editar URL do vídeo
-              </button>
+              </Button>
             )}
             {!readOnly && isEditingUrl && (
               <div className="space-y-2">
@@ -118,20 +119,20 @@ const MediaPreview = memo(
                   autoFocus
                 />
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="button"
                     onClick={handleSaveUrl}
                     className="flex-1 rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
                   >
                     Salvar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={handleCancelUrl}
                     className="flex-1 rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-200"
                   >
                     Cancelar
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -179,7 +180,7 @@ const MediaPreview = memo(
                   <button
                     type="button"
                     onClick={handleSaveUrl}
-                    className="flex-1 rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
+                    className="rounded-m flex-1 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
                   >
                     Salvar
                   </button>

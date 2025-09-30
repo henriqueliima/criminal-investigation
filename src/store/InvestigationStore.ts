@@ -133,7 +133,7 @@ export const useInvestigationWorkflow = create<InvestigationWorkflow>(
           const newClue: Clue = {
             id: generateClueId(),
             categoryId,
-            content: content || `Pista ${Date.now()}`,
+            content: content || `Edite para adicionar sua pista`,
           }
 
           return {
