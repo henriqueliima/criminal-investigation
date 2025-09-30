@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { EditIcon } from 'lucide-react'
+import { EditIcon, GripVertical } from 'lucide-react'
 import { memo, useCallback, useMemo, useState } from 'react'
 
 import type { Clue, Id, InvestigationCategory } from '../types'
@@ -56,8 +56,9 @@ const ClueCard = memo(
       () => ({
         transition,
         transform: CSS.Transform.toString(transform),
+        opacity: isDragging ? 0.5 : 1,
       }),
-      [transition, transform]
+      [transition, transform, isDragging]
     )
 
     const openModal = useCallback(() => {
@@ -129,7 +130,7 @@ const ClueCard = memo(
     }, [deleteClue, clue.id, closeModal])
 
     const handleEditClick = useCallback(
-      (e: React.MouseEvent) => {
+      (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault()
         e.stopPropagation()
         openModal()
@@ -137,60 +138,41 @@ const ClueCard = memo(
       [openModal]
     )
 
-    if (isDragging) {
-      return (
-        <div
-          ref={setNodeRef}
-          style={style}
-          className="relative flex rounded-xl bg-black px-2 py-4 text-left opacity-50"
-        >
-          {mediaType === 'text' ? clue.content : '📎 Mídia'}
-        </div>
-      )
-    }
-
     return (
       <>
         <div
           ref={setNodeRef}
           style={style}
-          className="nodrag relative flex flex-col gap-2 rounded-xl bg-black p-3 text-left transition-all hover:ring-2 hover:ring-inset hover:ring-rose-500"
+          className="nodrag nopan relative flex items-center gap-2 rounded-xl bg-black p-3 text-left transition-all hover:ring-2 hover:ring-inset hover:ring-rose-500"
         >
-          <div className="flex items-start justify-between gap-2">
-            <div
-              className="flex-1 cursor-grab"
-              {...attributes}
-              {...listeners}
-              style={{ touchAction: 'none' }}
-            >
-              {mediaType === 'text' ? (
-                <span className="select-none text-white">{clue.content}</span>
-              ) : (
-                <div className="select-none space-y-2">
-                  <div className="relative">
-                    <MediaPreview
-                      content={clue.content}
-                      type={mediaType}
-                      readOnly
-                    />
-                    <div
-                      className="absolute inset-0 z-0 cursor-grab"
-                      style={{ pointerEvents: 'auto' }}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <Button
-              onClick={handleEditClick}
-              color="transparent"
-              className="z-20 shrink-0 transition-all hover:scale-110"
-              style={{ pointerEvents: 'auto' }}
-            >
-              <EditIcon className="h-4 w-4" />
-            </Button>
+          <div
+            className="flex shrink-0 cursor-grab touch-none select-none items-center pt-1 text-gray-400 active:cursor-grabbing"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-5 w-5" />
           </div>
+
+          <div className="pointer-events-auto min-w-0 flex-1">
+            {mediaType === 'text' ? (
+              <span className="select-text text-white">{clue.content}</span>
+            ) : (
+              <div className="select-none space-y-2">
+                <MediaPreview
+                  content={clue.content}
+                  type={mediaType}
+                  readOnly
+                />
+              </div>
+            )}
+          </div>
+          <Button
+            onClick={handleEditClick}
+            onTouchEnd={handleEditClick}
+            className="pointer-events-auto z-20 shrink-0 text-white transition-all hover:scale-110"
+          >
+            <EditIcon className="h-4 w-4" />
+          </Button>
         </div>
 
         {isModalOpen && (
@@ -218,7 +200,5 @@ const ClueCard = memo(
     )
   }
 )
-
-ClueCard.displayName = 'ClueCard'
 
 export default ClueCard

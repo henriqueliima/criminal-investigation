@@ -11,7 +11,7 @@ import {
   Panel,
   ReactFlow,
 } from '@xyflow/react'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import CreateClueModal from '../components/CreateClueModal'
@@ -33,11 +33,19 @@ import {
   useInvestigationActions,
 } from '../store/InvestigationStore'
 
+const MOBILE_BREAKPOINT = 768
+const CATEGORY_HEIGHT = 200
+const CATEGORY_SPACING = 200
+
 function CriminalInvestigationPage() {
   const categoryNodes = useCategoryNodes()
   const categoryConnections = useCategoryConnections()
   const categoriesData = useCategoriesData()
   const allCategories = useAllCategories()
+
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
+  )
 
   const {
     applyNodeChanges,
@@ -61,6 +69,29 @@ function CriminalInvestigationPage() {
       reorderClues,
       categoriesData,
     })
+  useEffect(() => {
+    const handleResize = () => {
+      const newIsMobile = window.innerWidth < MOBILE_BREAKPOINT
+      if (newIsMobile !== isMobile) {
+        setIsMobile(newIsMobile)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [isMobile])
+
+  const layoutNodes = useMemo(() => {
+    if (!isMobile) return categoryNodes
+
+    return categoryNodes.map((node, index) => ({
+      ...node,
+      position: {
+        x: 20,
+        y: index * (CATEGORY_HEIGHT + CATEGORY_SPACING),
+      },
+    }))
+  }, [categoryNodes, isMobile])
 
   const handleOpenCreateClueModal = useCallback(
     (categoryId: string) => {
@@ -106,9 +137,18 @@ function CriminalInvestigationPage() {
 
   const handleCategoryNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      applyNodeChanges(changes)
+      if (isMobile) {
+        const filteredChanges = changes.filter(
+          (change) => change.type !== 'position'
+        )
+        if (filteredChanges.length > 0) {
+          applyNodeChanges(filteredChanges)
+        }
+      } else {
+        applyNodeChanges(changes)
+      }
     },
-    [applyNodeChanges]
+    [applyNodeChanges, isMobile]
   )
 
   const handleConnectionsChange = useCallback(
@@ -155,7 +195,7 @@ function CriminalInvestigationPage() {
     >
       <div className="h-screen w-screen">
         <ReactFlow
-          nodes={categoryNodes}
+          nodes={layoutNodes}
           edges={categoryConnections}
           onNodesChange={handleCategoryNodesChange}
           onEdgesChange={handleConnectionsChange}
@@ -163,10 +203,18 @@ function CriminalInvestigationPage() {
           onConnect={handleConnect}
           proOptions={{ hideAttribution: true }}
           fitView={false}
+          nodesDraggable={!isMobile}
+          nodesConnectable={!isMobile}
+          elementsSelectable={true}
+          panOnDrag={isMobile ? [1, 2] : true}
+          zoomOnScroll={!isMobile}
+          zoomOnPinch={isMobile}
+          preventScrolling={!isMobile}
+          className="touch-flow"
         >
           <Background />
-          <Controls />
-          <Panel>
+          {!isMobile && <Controls />}
+          <Panel position={isMobile ? 'top-center' : 'top-left'}>
             <Button onClick={newCategoryModal.openModal}>
               Adicionar Categoria
             </Button>

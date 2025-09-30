@@ -72,8 +72,8 @@ const InvestigationCategoryNode = memo(
     return (
       <div
         ref={setNodeRef}
-        className={`text-updater-node relative w-[350px] border bg-white p-2 transition-all ${
-          isOver ? 'ring-4 ring-blue-500' : ''
+        className={`text-updater-node relative min-w-[350px] border bg-white p-2 transition-all md:w-[350px] ${
+          isOver ? 'ring-4 ring-rose-500' : ''
         }`}
         data-category-id={categoryId}
       >
@@ -81,30 +81,30 @@ const InvestigationCategoryNode = memo(
           type="target"
           position={Position.Top}
           id="top"
-          className="!h-3 !w-3"
+          className="!h-4 !w-4 md:!h-3 md:!w-3"
         />
         <Handle
           type="source"
           position={Position.Bottom}
           id="bottom"
-          className="!h-3 !w-3"
+          className="!h-4 !w-4 md:!h-3 md:!w-3"
         />
         <Handle
           type="target"
           position={Position.Left}
           id="left"
-          className="!h-3 !w-3"
+          className="!h-4 !w-4 md:!h-3 md:!w-3"
         />
         <Handle
           type="source"
           position={Position.Right}
           id="right"
-          className="!h-3 !w-3"
+          className="!h-4 !w-4 md:!h-3 md:!w-3"
         />
 
         <div
-          className={`flex min-h-[350px] w-full flex-col rounded-md bg-brand-background text-white transition-all ${
-            isOver ? 'ring-2 ring-inset ring-blue-400' : ''
+          className={`flex h-[350px] w-full flex-col rounded-md bg-brand-background text-white transition-all ${
+            isOver ? 'ring-2 ring-inset ring-rose-500' : ''
           }`}
         >
           <div className="flex h-[60px] cursor-grab items-center justify-between rounded-md rounded-b-none border-4 p-3 font-bold">

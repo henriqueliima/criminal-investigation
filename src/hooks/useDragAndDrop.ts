@@ -1,5 +1,10 @@
 import type { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
-import { PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 import { useCallback, useState } from 'react'
 
 import type { CategoryNodeData, Clue, Id } from '../types'
@@ -23,12 +28,22 @@ export const useDragAndDrop = ({
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 1, delay: 0 },
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
     })
   )
 
   const onDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event
+
+    // Só ativa se for especificamente uma Clue
     if (active.data.current?.type === 'Clue') {
       setActiveClue(active.data.current.clue)
     }
@@ -56,6 +71,11 @@ export const useDragAndDrop = ({
       if (over.data.current?.type === 'Clue') {
         const targetClue = over.data.current.clue as Clue
         const targetCategoryId = targetClue.categoryId
+
+        if (String(draggedClue.id) === String(targetClue.id)) {
+          setActiveClue(null)
+          return
+        }
 
         if (sourceCategoryId === targetCategoryId) {
           reorderClues(sourceCategoryId, draggedClue.id, targetClue.id)
@@ -86,10 +106,13 @@ export const useDragAndDrop = ({
         const targetClue = over.data.current.clue as Clue
         const targetCategoryId = targetClue.categoryId
 
-        if (sourceCategoryId !== targetCategoryId) {
+        if (
+          sourceCategoryId !== targetCategoryId &&
+          String(draggedClue.id) !== String(targetClue.id)
+        ) {
           const clueAlreadyInTarget = categoriesData[
             targetCategoryId
-          ]?.clues.some((c) => String(c.id) === String(draggedClue.id))
+          ]?.clues.some((clue) => String(clue.id) === String(draggedClue.id))
 
           if (!clueAlreadyInTarget) {
             moveClueToCategory(
