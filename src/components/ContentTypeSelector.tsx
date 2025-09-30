@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import Button from './Button'
+import Button from './ui/Button'
 
 export type ContentType = 'text' | 'image' | 'video' | 'audio'
 

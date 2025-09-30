@@ -14,10 +14,10 @@ import {
 import { useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 
-import Button from '../components/Button'
 import CreateClueModal from '../components/CreateClueModal'
 import InvestigationCategoryNode from '../components/InvestigationCategoryNode'
 import Modal from '../components/Modal'
+import Button from '../components/ui/Button'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
 import {
   useCategoryModal,

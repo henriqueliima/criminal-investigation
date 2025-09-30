@@ -1,7 +1,7 @@
 import { memo, useState } from 'react'
 
 import type { MediaType } from '../types/mediaTypes'
-import Button from './Button'
+import Button from './ui/Button'
 
 interface MediaPreviewProps {
   content: string

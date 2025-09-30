@@ -2,7 +2,7 @@ import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
-import Button from './Button'
+import Button from './ui/Button'
 
 interface ModalProps {
   children: ReactNode

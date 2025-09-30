@@ -9,8 +9,8 @@ import {
   useCategoryData,
   useInvestigationActions,
 } from '../store/InvestigationStore'
-import Button from './Button'
 import ClueCard from './ClueCard'
+import Button from './ui/Button'
 
 interface InvestigationCategoryNodeProps {
   categoryId: string

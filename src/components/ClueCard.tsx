@@ -5,10 +5,10 @@ import { memo, useCallback, useMemo, useState } from 'react'
 
 import type { Clue, Id, InvestigationCategory } from '../types'
 import { type ContentType, detectMediaType } from '../types/mediaTypes'
-import Button from './Button'
 import ClueEditorModal from './ClueEditorModal'
 import MediaPreview from './MediaPreview'
 import Modal from './Modal'
+import Button from './ui/Button'
 
 interface ClueCardProps {
   clue: Clue
