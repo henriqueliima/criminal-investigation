@@ -18,6 +18,7 @@ import CreateClueModal from '../components/CreateClueModal'
 import InvestigationCategoryNode from '../components/InvestigationCategoryNode'
 import Modal from '../components/Modal'
 import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
 import {
   useCategoryModal,
@@ -186,9 +187,8 @@ function CriminalInvestigationPage() {
               saveModal={handleSaveNewCategory}
               closeModal={newCategoryModal.closeModal}
             >
-              <input
+              <Input
                 type="text"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 placeholder="Nome da categoria (ex: Evidências Físicas)"
                 value={newCategoryModal.categoryName}
                 onChange={(e) =>
@@ -206,7 +206,7 @@ function CriminalInvestigationPage() {
               deleteModal={handleDeleteCategory}
               showDelete={true}
             >
-              <input
+              <Input
                 type="text"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 placeholder="Nome da categoria"

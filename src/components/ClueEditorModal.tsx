@@ -4,6 +4,7 @@ import type { InvestigationCategory } from '../types'
 import type { ContentType, MediaType } from '../types/mediaTypes'
 import ContentTypeSelector from './ContentTypeSelector'
 import MediaPreview from './MediaPreview'
+import Input from './ui/Input'
 
 interface ClueEditorModalProps {
   draft: string
@@ -51,7 +52,7 @@ const ClueEditorModal = memo(
           onFileButtonClick={handleFileButtonClick}
         />
 
-        <input
+        <Input
           ref={fileInputRef}
           type="file"
           accept={

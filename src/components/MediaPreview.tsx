@@ -2,6 +2,7 @@ import { memo, useState } from 'react'
 
 import type { MediaType } from '../types/mediaTypes'
 import Button from './ui/Button'
+import Input from './ui/Input'
 
 interface MediaPreviewProps {
   content: string
@@ -55,9 +56,8 @@ const MediaPreview = memo(
             )}
             {!readOnly && isEditingUrl && (
               <div className="space-y-2">
-                <input
+                <Input
                   type="url"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   value={tempUrl}
                   onChange={(e) => setTempUrl(e.target.value)}
                   placeholder="Cole a URL da imagem"
@@ -110,9 +110,8 @@ const MediaPreview = memo(
             )}
             {!readOnly && isEditingUrl && (
               <div className="space-y-2">
-                <input
+                <Input
                   type="url"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   value={tempUrl}
                   onChange={(e) => setTempUrl(e.target.value)}
                   placeholder="Cole a URL do vídeo"
@@ -168,9 +167,8 @@ const MediaPreview = memo(
             )}
             {!readOnly && isEditingUrl && (
               <div className="space-y-2">
-                <input
+                <Input
                   type="url"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   value={tempUrl}
                   onChange={(e) => setTempUrl(e.target.value)}
                   placeholder="Cole a URL do áudio"
