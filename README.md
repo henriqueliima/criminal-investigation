@@ -1,73 +1,49 @@
-# React + TypeScript + Vite
+# Criminal Investigation Workflow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema criado para o desafio da Kirvano, tem como objetivo visual organizar investigações criminais. Permite criar grupos, pistas com diferentes tipos de mídia e a possibilidade de estar conectando as informações.
 
-Currently, two official plugins are available:
+## Stack Técnico
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- Zustand
+- @dnd-kit
+- reactFlow
+- Lucide React
 
-## React Compiler
+## Instalação
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Funcionalidades
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**Categorias de Investigação**
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Criar e organizar grupos visuais no canvas
+- Editar títulos
+- Deletar categorias
+- Conectar categorias entre si
+
+**Pistas**
+
+- Adicionar texto, imagens, vídeos ou áudios
+- Arrastar entre categorias
+- Reordenar dentro da mesma categoria
+- Editar conteúdo via modal
+- Mover para outra categoria via dropdown
+
+**Canvas**
+
+- Pan e zoom
+- Posicionamento livre
+- Conexões visuais entre categorias
+
+## Como Usar
+
+Adicione uma categoria clicando no botão no canto superior esquerdo. Dentro de cada categoria você pode adicionar pistas. Arraste pistas para movê-las ou reordená-las. Clique no ícone de edição para modificar o conteúdo ou trocar de categoria. Para conectar categorias, arraste de uma borda até outra.
+
+Desenvolvido por: Henrique Lima
