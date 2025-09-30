@@ -29,6 +29,7 @@ interface InvestigationWorkflow {
       toCategoryId: string
     ) => void
     reorderClues: (categoryId: string, clueId: Id, overClueId: Id) => void
+    exportWorkflow: () => string
   }
 }
 
@@ -38,7 +39,7 @@ const generateClueId = () =>
   `clue_${Date.now()}_${Math.random().toString(36).substring(7)}`
 
 export const useInvestigationWorkflow = create<InvestigationWorkflow>(
-  (set) => ({
+  (set, get) => ({
     categoryNodes: [],
     categoryConnections: [],
     categoriesData: {},
@@ -243,6 +244,20 @@ export const useInvestigationWorkflow = create<InvestigationWorkflow>(
             },
           }
         }),
+
+      exportWorkflow: () => {
+        const state = get()
+        const workflowData = {
+          version: '1.0',
+          exportDate: new Date().toISOString(),
+          workflow: {
+            categoryNodes: state.categoryNodes,
+            categoryConnections: state.categoryConnections,
+            categoriesData: state.categoriesData,
+          },
+        }
+        return JSON.stringify(workflowData, null, 2)
+      },
     },
   })
 )

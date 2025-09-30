@@ -11,6 +11,7 @@ import {
   Panel,
   ReactFlow,
 } from '@xyflow/react'
+import { Download, Plus } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -57,6 +58,7 @@ function CriminalInvestigationPage() {
     addClue,
     moveClueToCategory,
     reorderClues,
+    exportWorkflow,
   } = useInvestigationActions()
 
   const clueModal = useClueModal()
@@ -186,6 +188,19 @@ function CriminalInvestigationPage() {
     [handleEditCategory, handleOpenCreateClueModal, allCategories]
   )
 
+  const handleExport = useCallback(() => {
+    const jsonString = exportWorkflow()
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `workflow-${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }, [exportWorkflow])
+
   return (
     <DndContext
       sensors={sensors}
@@ -214,9 +229,24 @@ function CriminalInvestigationPage() {
         >
           <Background />
           {!isMobile && <Controls />}
-          <Panel position={isMobile ? 'top-center' : 'top-left'}>
-            <Button onClick={newCategoryModal.openModal}>
-              Adicionar Categoria
+          <Panel
+            className="flex gap-3"
+            position={isMobile ? 'top-center' : 'top-left'}
+          >
+            <Button
+              className="flex items-center"
+              onClick={newCategoryModal.openModal}
+            >
+              <Plus className="h-5 w-5 md:mr-1" />
+              {!isMobile && 'Adicionar Grupo'}
+            </Button>
+            <Button
+              onClick={handleExport}
+              color="secondary"
+              className="flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              {!isMobile && 'Exportar'}
             </Button>
           </Panel>
 
@@ -237,7 +267,7 @@ function CriminalInvestigationPage() {
             >
               <Input
                 type="text"
-                placeholder="Nome da categoria (ex: Evidências Físicas)"
+                placeholder="Nome do grupo"
                 value={newCategoryModal.categoryName}
                 onChange={(e) =>
                   newCategoryModal.setCategoryName(e.target.value)
@@ -257,7 +287,7 @@ function CriminalInvestigationPage() {
               <Input
                 type="text"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary"
-                placeholder="Nome da categoria"
+                placeholder="Nome do grupo"
                 value={categoryModal.categoryName}
                 onChange={(e) => categoryModal.setCategoryName(e.target.value)}
                 autoFocus
